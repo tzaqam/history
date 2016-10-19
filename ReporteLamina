@@ -1,0 +1,158 @@
+@model IEnumerable<Hexgonos.Models.LaminaEstadisticas>
+
+@{
+    ViewBag.Title = "Reporte Laminadora";
+}
+<style>
+    .panel {
+        padding: 1px !important;
+    }
+
+    .kit {
+        background: #b8ebf3;
+    }
+    #footer {
+        background: #c5393b;
+        padding: 4px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 36px; /* choose any height */
+    }
+    p{
+        color:white;
+    }
+</style>
+<div class="row">
+    <div class="large-12">
+        <h5 class="text-center">REPORTE DE PRODUCCIÓN LAMINADORA</h5>
+    </div>
+</div>
+<div class="row columns">
+    <div class="large-12">
+        <table class="responsive">
+            <thead>
+                <tr>
+                    <td>Fecha</td>
+                    <td>Folio</td>
+                    <td>Cliente</td>
+                    <td>Ancho </td> 
+                    <td>Largo</td>
+                    <td>Espesor</td>
+                    <td>Hex</td>
+                    <td>Papel superior</td>
+                    <td>Papel inferior</td>
+                    <td>Pzas. Fabricadas</td>
+                    <td>Pzas. Scrap</td>
+                    <td>Ancho rollo 1</td>
+                    <td>Ancho rollo 2</td>
+                    <td>Mts. Lineales</td>
+                    <td>Mts. Cuadrados</td>
+                    <td>KG Papel 1</td>
+                    <td>KG Papel 2</td>
+                    <td>Codigo Adhesivo</td>
+                    <td>Operador</td>
+                    <td>Calibrado a:</td>
+                    <td>Prueba de pegado</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    if (item.Lamina.Programacion.Pedido.Producto.esLigado)
+                    {
+                        <tr class="kit">
+                            <td>@item.Fecha</td>
+                            <td>@item.Lamina.Programacion.Pedido.Folio</td>
+                            <td>@item.Lamina.Programacion.Pedido.Cliente.Alias</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.LamAnchoM</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.LamLargoM</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.Espesor</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.Hex</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.CaraSup</td>
+                            <td>@item.Lamina.Piezas.ProductoHasPiezas.CaraInf</td>
+                            <td>@item.Fabricadas</td>
+                            <td>@item.rechazadas</td>
+                            <td>@item.Rollo1.Ancho</td>
+                            <td>@item.Rollo2.Ancho</td>
+                            <td>@item.MetrosLineales</td>
+                            <td>@item.MetrosCuadrados</td>
+                            <td>@(item.KilosRollo1)</td>
+                            <td>@(item.KilosRollo2)</td>
+                            <td>@item.CodigoAdhesivo</td>
+                            <td>@item.Operador.UserName</td>
+                            <td>@item.Calibracion.Valor</td>
+                            <td>
+                                @if (item.PruebaPegado)
+                                { <i class='fa fa-check' aria-hidden='true'></i> }
+                                else
+                                { <i class='fa fa-times' aria-hidden='true'></i> }
+                        </td>
+                    </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@item.Fecha</td>
+                            <td>@item.Lamina.Programacion.Pedido.Folio</td>
+                            <td>@item.Lamina.Programacion.Pedido.Cliente.Alias</td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.LamAnchoM </td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.LamLargoM</td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.Espesor</td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.Hex</td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.CaraSup</td>
+                            <td>@item.Lamina.Programacion.Pedido.Producto.CaraInf</td>
+                            <td>@item.Fabricadas</td>
+                            <td>@item.rechazadas</td>
+                            <td>@item.Rollo1.Ancho</td>
+                            <td>@item.Rollo2.Ancho</td>
+                            <td>@item.MetrosLineales</td>
+                            <td>@item.MetrosCuadrados</td>
+                            <td>@(item.KilosRollo1)</td>
+                            <td>@(item.KilosRollo2)</td>
+                            <td>@item.CodigoAdhesivo</td>
+                            <td>@item.Operador.UserName</td>
+                            <td>@((item.Calibracion.Valor == null) ? "" : "")</td>
+                            <td>
+                                @if (item.PruebaPegado)
+                                { <i class='fa fa-check' aria-hidden='true'></i> }
+                                else
+                                { <i class='fa fa-times' aria-hidden='true'></i> }
+                        </td>
+                    </tr>
+                    }
+                }
+                
+            </tbody>
+            
+        </table>
+    </div>
+</div>
+<div id="footer">
+    <div class="large-12">
+        <div class="row">
+            <p> Total metros lineales: @Model.Sum(x => x.MetrosLineales) | Total metros <sup>2</sup>: @Model.Sum(x => x.MetrosCuadrados) | piezas totales: @Model.Sum(x => x.Fabricadas) |</p>
+            @*<p> Kilos rollo 1: @Model.Where()</p>*@
+        </div>
+    </div>
+</div>
+
+<script>
+    //$(document).ready(function () {
+    //    if ($('#fechaInicio')[0].type != 'date') {
+    //        $("#fechaInicio").datepicker({
+    //            changeMonth: true,
+    //            changeYear: true,
+    //            dateFormat: 'dd-MM-yy',
+    //            minDate: 0
+    //        });
+    //        $("#fechaFin").datepicker({
+    //            changeMonth: true,
+    //            changeYear: true,
+    //            dateFormat: 'dd-MM-yy',
+    //            minDate: 0
+    //        });
+    //    }
+
+    //});
+</script>
